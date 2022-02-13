@@ -1,0 +1,27 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create build dir
+        run: mkdir -p build/filter-dsl-context-receivers/
+      - name: Convert to HTML
+        uses: docker://pandoc/core:2.17
+        with:
+          args: >-
+            -s
+            --highlight-style haddock
+            --from=markdown 
+            -o build/filter-dsl-context-receivers/index.html
+            filter-dsl-context-receivers/filterDSL.md
+      - name: Publish to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4.2.3
+        with:
+          branch: gh-pages
+          folder: build
+          
