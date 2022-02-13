@@ -8,6 +8,8 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Create build dir
         run: mkdir -p build/filter-dsl-context-receivers/
       - name: Convert to HTML
