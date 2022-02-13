@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Filter DSL with context receivers</title>
+  <title>DSL with new context receivers</title>
   <style>
     html {
       line-height: 1.5;
@@ -228,7 +228,7 @@
 </head>
 <body>
 <header id="title-block-header">
-<h1 class="title">Filter DSL with context receivers</h1>
+<h1 class="title">DSL with new context receivers</h1>
 </header>
 <p><img src="images/title.jpg" style="width:100.0%" /></p>
 <h2 id="the-problem">The problem</h2>
@@ -344,13 +344,15 @@ receivers</h2>
 <p><img src="images/grass.jpg" style="width:100.0%" /></p>
 <p>What we really want is to tell the <code>eq</code> function to take
 in any <code>T</code>, but only if there is also a way to express that
-type in the query output. So if we define an interface
+type in the query output. Enter the <a
+href="https://github.com/Kotlin/KEEP/blob/master/proposals/context-receivers.md">new
+context receivers</a>. We define an interface
 <code>Expressable</code>:</p>
 <div class="sourceCode" id="cb10"><pre
 class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> Expressable<span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;</span> <span class="op">{</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">fun</span> <span class="fu">T</span><span class="op">.</span><span class="fu">asFilterPart</span><span class="op">():</span> <span class="dt">FilterPart</span><span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>and require it for the <code>eq</code> function, we can delegate back
+<p>and require it for the <code>eq</code> function. We can delegate back
 to the function from the first draft:</p>
 <div class="sourceCode" id="cb11"><pre
 class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>context<span class="op">(</span>Expressable<span class="op">&lt;</span>T<span class="op">&gt;)</span></span>
