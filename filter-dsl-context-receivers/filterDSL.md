@@ -1,5 +1,5 @@
 ---
-title: Filter DSL with context receivers
+title: DSL with new context receivers
 mainfont: Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif
 header-includes: |
   <style>
@@ -128,7 +128,7 @@ Here come the context receivers
 ![](images/grass.jpg){ width=100% }
 
 
-What we really want is to tell the `eq` function to take in any `T`, but only if there is also a way to express that type in the query output. So if we define an interface `Expressable`:
+What we really want is to tell the `eq` function to take in any `T`, but only if there is also a way to express that type in the query output. Enter the [new context receivers](https://github.com/Kotlin/KEEP/blob/master/proposals/context-receivers.md). We define an interface `Expressable`:
 
 ```kotlin
 interface Expressable<T> {
@@ -136,7 +136,7 @@ interface Expressable<T> {
 }
 ```
 
-and require it for the `eq` function, we can delegate back to the function from the first draft:
+and require it for the `eq` function. We can delegate back to the function from the first draft:
 
 ```kotlin
 context(Expressable<T>)
