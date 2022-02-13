@@ -192,7 +192,7 @@ infix fun <A, B> A.and(other: B): Filter =
     BiOpFilter(this.toFilterPart(), "and", other.toFilterPart())
 ```
 
-Sadly, there is one snag: Even though we can create `ExpressableAs<FilterPart<T>, T>`{.kotlin} for any type T, to actually use for a specific type we need to bring a specific instance into scope. The `filter`{.kotlin} function now looks like a mess[^4]:
+Sadly, there is one snag: Even though we can create `ExpressableAs<FilterPart<T>, T>`{.kotlin} for any type T, to actually use it for a specific type we need to bring a specific instance into scope. The `filter`{.kotlin} function now looks like a mess[^4]:
 
 ```kotlin
 fun <E> E.filter(
@@ -210,7 +210,7 @@ Maybe we should have stopped at the previous solution.
 Conclusion
 ----------
 
-We have seen how context receivers can help keep our DSL clean by plumbing through needed information. I'm looking forward to what other uses the community can up using this new Kotlin feature.
+We have seen how context receivers can help keep our DSL clean by plumbing through needed information. I'm looking forward to what other uses the community can come up using this new Kotlin feature.
 
 If anyone comes up with a better solution please let me know. Maybe an alternative would be [Arrow proofs](https://arrow-kt.io/docs/meta/proofs/)? If it gets picked back up again.
 
