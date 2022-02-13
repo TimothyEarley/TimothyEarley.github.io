@@ -1,4 +1,15 @@
-% Filter DSL with context receivers
+---
+title: Filter DSL with context receivers
+mainfont: Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif
+header-includes: |
+  <style>
+  pre.sourceCode {
+      margin: 10px;
+  }
+  </style>
+---
+
+![](images/title.jpg){ width=100% }
 
 The problem
 -----------
@@ -114,6 +125,9 @@ We then have to bite the bullet and write `(id eq int(1)) and (name eq string("t
 Here come the context receivers
 -------------------------------
 
+![](images/grass.jpg){ width=100% }
+
+
 What we really want is to tell the `eq` function to take in any `T`, but only if there is also a way to express that type in the query output. So if we define an interface `Expressable`:
 
 ```kotlin
@@ -181,7 +195,7 @@ infix fun <A, B> A.and(other: B): Filter =
 Sadly, there is one snag: Even though we can create `ExpressableAs<FilterPart<T>, T>`{.kotlin} for any type T, to actually use for a specific type we need to bring a specific instance into scope. The `filter`{.kotlin} function now looks like a mess[^4]:
 
 ```kotlin
-fun <E> E.filter2(
+fun <E> E.filter(
     f : context(ExpressableAs<Int, Int>,
                 ExpressableAs<FilterPart<Int>, Int>,
                 ExpressableAs<String, String>,

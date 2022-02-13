@@ -17,10 +17,12 @@ jobs:
         with:
           args: >-
             -s
-            --highlight-style haddock
+            --highlight-style tango
             --from=markdown 
             -o build/filter-dsl-context-receivers/index.html
             filter-dsl-context-receivers/filterDSL.md
+      - name: Copy images
+        run: cp -r filter-dsl-context-receivers/images build/filter-dsl-context-receivers/images
       - name: Publish to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4.2.3
         with:
