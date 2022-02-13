@@ -1,5 +1,6 @@
 ---
 title: DSL with new context receivers
+author: Timothy Earley
 mainfont: Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif
 header-includes: |
   <style>
@@ -210,7 +211,7 @@ Maybe we should have stopped at the previous solution.
 Conclusion
 ----------
 
-We have seen how context receivers can help keep our DSL clean by plumbing through needed information. I'm looking forward to what other uses the community can come up using this new Kotlin feature.
+We have seen how context receivers can help keep our DSL clean by plumbing through needed information. I'm looking forward to see what others do with this new Kotlin feature.
 
 If anyone comes up with a better solution please let me know. Maybe an alternative would be [Arrow proofs](https://arrow-kt.io/docs/meta/proofs/)? If it gets picked back up again.
 
