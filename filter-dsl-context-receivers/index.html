@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Filter DSL with context receivers</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; } /* Alert */
+    code span.an { color: #008000; } /* Annotation */
+    code span.at { } /* Attribute */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #0000ff; } /* ControlFlow */
+    code span.ch { color: #008080; } /* Char */
+    code span.cn { } /* Constant */
+    code span.co { color: #008000; } /* Comment */
+    code span.cv { color: #008000; } /* CommentVar */
+    code span.do { color: #008000; } /* Documentation */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.im { } /* Import */
+    code span.in { color: #008000; } /* Information */
+    code span.kw { color: #0000ff; } /* Keyword */
+    code span.op { } /* Operator */
+    code span.ot { color: #ff4000; } /* Other */
+    code span.pp { color: #ff4000; } /* Preprocessor */
+    code span.sc { color: #008080; } /* SpecialChar */
+    code span.ss { color: #008080; } /* SpecialString */
+    code span.st { color: #008080; } /* String */
+    code span.va { } /* Variable */
+    code span.vs { color: #008080; } /* VerbatimString */
+    code span.wa { color: #008000; font-weight: bold; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Filter DSL with context receivers</h1>
+</header>
+<h2 id="the-problem">The problem</h2>
+<p>Kotlin has amazing capabilities for writing DSLs. A nice use case of
+this is in SQL or SQL-like where clauses. Consider the following
+example:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>People<span class="op">.</span>filter <span class="op">{</span> <span class="op">(</span>name eq <span class="st">&quot;test&quot;</span><span class="op">)</span> and <span class="op">(</span>id eq <span class="dv">1</span><span class="op">)</span> <span class="op">}</span></span></code></pre></div>
+<p>This reads nicely and many libraries support this style, for example,
+<a
+href="https://github.com/JetBrains/Exposed/wiki/DSL#read">Exposed</a>,
+<a href="https://www.ktorm.org/en/query.html#where">Ktorm</a> and <a
+href="https://github.com/edvin/kdbc">kdbc</a>.</p>
+<p>When implementing this myself (not for SQL) I ran into a problem: How
+to limit the types used in the query. This was important because I only
+knew how to convert certain types into the query format (such as String,
+Int, LocalDate, but not Lists, ByteArray, etc.) <a href="#fn1"
+class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a>.</p>
+<h2 id="setup">Setup</h2>
+<p>Let’s first get an understanding of the basic setup. An entity is
+defined via its properties <a href="#fn2" class="footnote-ref"
+id="fnref2" role="doc-noteref"><sup>2</sup></a>. Here this consists of a
+generic type and a name.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="kw">class</span> Property<span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;(</span><span class="kw">val</span> <span class="va">name</span> <span class="op">:</span> <span class="dt">String</span><span class="op">)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> People <span class="op">{</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> <span class="va">name</span> <span class="op">=</span> Property<span class="op">&lt;</span><span class="kw">String</span><span class="op">&gt;(</span><span class="st">&quot;name&quot;</span><span class="op">)</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> <span class="va">id</span> <span class="op">=</span> Property<span class="op">&lt;</span><span class="kw">Int</span><span class="op">&gt;(</span><span class="st">&quot;id&quot;</span><span class="op">)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>A <code class="sourceCode kotlin">Filter</code> is made up of parts
+that are joined together by operators. We want each part of a filter to
+be typed and know how to convert itself to the output query. A filter
+then is nothing special: Just a part that happens to have a type of
+Boolean.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> <span class="kw">interface</span> <span class="fu">FilterPart</span><span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">fun</span> <span class="fu">build</span><span class="op">()</span> <span class="op">:</span> <span class="dt">String</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">typealias</span> <span class="fu">Filter</span> <span class="op">=</span> FilterPart<span class="op">&lt;</span><span class="kw">Boolean</span><span class="op">&gt;</span></span></code></pre></div>
+<p>We are now ready for the first version of the filter function. It is
+quite trivial:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> <span class="op">&lt;</span><span class="dt">E</span><span class="op">&gt;</span> <span class="fu">E</span><span class="op">.</span><span class="fu">filter</span><span class="op">(</span><span class="va">f</span> <span class="op">:</span> <span class="dt">E</span>.(<span class="op">)</span> -&gt; <span class="fu">Filter</span>)<span class="op">:</span> <span class="dt">Filter</span> <span class="op">=</span> f<span class="op">(</span><span class="kw">this</span><span class="op">)</span></span></code></pre></div>
+<p>The interesting parts are the the <code
+class="sourceCode kotlin">eq</code> and <code
+class="sourceCode kotlin">and</code> function.</p>
+<h2 id="all-good-things-come-in-twos">All good things come in twos</h2>
+<p>Before going into their implementation we note that both functions
+take two existing parts and combine them. So let’s create a quick helper
+class for this.</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> BiOpFilterPart<span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;(</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> <span class="va">left</span> <span class="op">:</span> <span class="dt">FilterPart</span>&lt;*&gt;<span class="op">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> <span class="va">op</span> <span class="op">:</span> <span class="dt">String</span><span class="op">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> <span class="va">right</span> <span class="op">:</span> <span class="dt">FilterPart</span>&lt;*&gt;</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="op">)</span> <span class="op">:</span> <span class="dt">FilterPart</span><span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">override</span> <span class="kw">fun</span> <span class="fu">build</span><span class="op">():</span> <span class="dt">String</span> <span class="op">=</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;(</span><span class="ss">${</span>left<span class="op">.</span>build<span class="op">()</span><span class="ss">}</span><span class="st"> </span><span class="ss">$op</span><span class="st"> </span><span class="ss">${</span>right<span class="op">.</span>build<span class="op">()</span><span class="ss">}</span><span class="st">)&quot;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Since the types of the left and right parts are irrelevant, only the
+output type is used, we can just star them out.</p>
+<h2 id="a-first-draft">A first draft</h2>
+<p>A simple implementation of <code class="sourceCode kotlin">and</code>
+and <code class="sourceCode kotlin">eq</code> looks like this:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">infix</span> <span class="kw">fun</span> <span class="fu">Filter</span><span class="op">.</span><span class="fu">and</span><span class="op">(</span><span class="va">other</span> <span class="op">:</span> <span class="dt">Filter</span><span class="op">)</span> <span class="op">:</span> <span class="dt">Filter</span> <span class="op">=</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    BiOpFilterPart<span class="op">(</span>left<span class="op">,</span> <span class="st">&quot;and&quot;</span><span class="op">,</span> right<span class="op">)</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">infix</span> <span class="kw">fun</span> <span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;</span> <span class="fu">FilterPart</span><span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;.</span><span class="fu">eq</span><span class="op">(</span><span class="va">other</span> <span class="op">:</span> <span class="dt">FilterPart</span>&lt;<span class="va">T</span>&gt;<span class="op">)</span> <span class="op">:</span> <span class="dt">Filter</span> <span class="op">=</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    BiOpFilterPart<span class="op">(</span>left<span class="op">,</span> <span class="st">&quot;eq&quot;</span><span class="op">,</span> right<span class="op">)</span></span></code></pre></div>
+<p>Does that cover the DSL? Well, no. We cannot simply write <code
+class="sourceCode kotlin">name eq <span class="st">&quot;test&quot;</span></code>
+since neither name nor “test” are <code>FilterPart</code>s. For the name
+property this is a simple fix, by letting <code
+class="sourceCode kotlin">Property<span class="op">&lt;</span>T<span class="op">&gt;</span></code>
+implement <code
+class="sourceCode kotlin">FilterPart<span class="op">&lt;</span>T<span class="op">&gt;</span></code>.</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Property<span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;(</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">val</span> <span class="va">name</span><span class="op">:</span> <span class="dt">String</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="op">)</span> <span class="op">:</span> <span class="dt">FilterPart</span><span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">override</span> <span class="kw">fun</span> <span class="fu">build</span><span class="op">():</span> <span class="dt">String</span> <span class="op">=</span> name</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>The same cannot be done for <code
+class="sourceCode kotlin"><span class="st">&quot;test&quot;</span></code>.
+We cannot change the String class.</p>
+<h2 id="a-second-attempt">A second attempt</h2>
+<p>So let’s just let our <code>eq</code> function take
+<code>T</code>:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">infix</span> <span class="kw">fun</span> <span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;</span> <span class="fu">FilterPart</span><span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;.</span><span class="fu">eq</span><span class="op">(</span><span class="va">other</span> <span class="op">:</span> <span class="dt">T</span><span class="op">)</span> <span class="op">:</span> <span class="dt">Filter</span> <span class="op">=</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    BiOpFilterPart<span class="op">(</span>left<span class="op">,</span> <span class="st">&quot;eq&quot;</span><span class="op">,</span> wrap<span class="op">(</span>right<span class="op">))</span></span></code></pre></div>
+<p>Then just define a function <code>wrap</code> that switches on type T
+to create a fitting <code>FilterPart</code>. This is how <a
+href="https://github.com/JetBrains/Exposed/blob/3070d054119c7d8840e9e8fd0376a3dbf1a9692b/exposed-core/src/main/kotlin/org/jetbrains/exposed/sql/SQLExpressionBuilder.kt#L140">Exposed
+does it</a>. However, this is where my problem comes in. Exposed can do
+this because it knows the type T will be a type it can handle. I do
+not.</p>
+<h2 id="a-compromise">A compromise</h2>
+<p>My initial compromise was to create wrapper functions.</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> <span class="fu">string</span><span class="op">(</span><span class="va">s</span> <span class="op">:</span> <span class="dt">String</span><span class="op">)</span> <span class="op">=</span> FilterPart<span class="op">&lt;</span><span class="kw">String</span><span class="op">&gt;</span> <span class="op">{</span> <span class="st">&quot;&#39;</span><span class="ss">$s</span><span class="st">&#39;&quot;</span> <span class="op">}</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> <span class="fu">int</span><span class="op">(</span><span class="va">i</span> <span class="op">:</span> <span class="dt">Int</span><span class="op">)</span> <span class="op">=</span> FilterPart<span class="op">&lt;</span><span class="kw">String</span><span class="op">&gt;</span> <span class="op">{</span> i<span class="op">.</span>toString<span class="op">()</span> <span class="op">}</span></span></code></pre></div>
+<p>We then have to bite the bullet and write <code
+class="sourceCode kotlin"><span class="op">(</span>id eq int<span class="op">(</span><span class="dv">1</span><span class="op">))</span> and <span class="op">(</span>name eq string<span class="op">(</span><span class="st">&quot;test&quot;</span><span class="op">))</span></code>.
+This still reads fine and uses the simple definitions in the first
+draft.</p>
+<h2 id="here-come-the-context-receivers">Here come the context
+receivers</h2>
+<p>What we really want is to tell the <code>eq</code> function to take
+in any <code>T</code>, but only if there is also a way to express that
+type in the query output. So if we define an interface
+<code>Expressable</code>:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> Expressable<span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">fun</span> <span class="fu">T</span><span class="op">.</span><span class="fu">asFilterPart</span><span class="op">():</span> <span class="dt">FilterPart</span><span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>and require it for the <code>eq</code> function, we can delegate back
+to the function from the first draft:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>context<span class="op">(</span>Expressable<span class="op">&lt;</span>T<span class="op">&gt;)</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">infix</span> <span class="kw">fun</span> <span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;</span> <span class="fu">FilterPart</span><span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;.</span><span class="fu">eq</span><span class="op">(</span><span class="va">other</span> <span class="op">:</span> <span class="dt">T</span><span class="op">)</span> <span class="op">:</span> <span class="dt">Filter</span> <span class="op">=</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span> eq other<span class="op">.</span>asFilterPart<span class="op">()</span></span></code></pre></div>
+<p>To inject this into the scope where needed we modify the
+<code>filter</code> function</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> IntExpressable <span class="op">:</span> <span class="dt">Expressable</span><span class="op">&lt;</span><span class="dt">Int</span><span class="op">&gt;</span> <span class="op">{</span> <span class="op">...</span> <span class="op">}</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> StringExpressable <span class="op">:</span> <span class="dt">Expressable</span><span class="op">&lt;</span><span class="dt">String</span><span class="op">&gt;</span> <span class="op">{</span> <span class="op">...</span> <span class="op">}</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> <span class="op">&lt;</span><span class="dt">E</span><span class="op">&gt;</span> <span class="fu">E</span><span class="op">.</span><span class="fu">filter</span><span class="op">(</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">f</span> <span class="op">:</span> <span class="dt">context</span>(<span class="va">Expressable</span>&lt;<span class="va">Int</span>&gt;<span class="op">,</span> <span class="va">Expressable</span>&lt;<span class="va">String</span>&gt;<span class="op">)</span> <span class="fu">E</span><span class="op">.()</span> -&gt; <span class="fu">Filter</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">:</span> <span class="dt">Filter</span> <span class="op">=</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    f<span class="op">(</span>IntExpressable<span class="op">,</span> StringExpressable<span class="op">,</span> <span class="kw">this</span><span class="op">)</span></span></code></pre></div>
+<p>And voilà; our goal has been achieved. We can use constants in the
+filter without wrapping them first and effectively control which types
+are allowed <a href="#fn3" class="footnote-ref" id="fnref3"
+role="doc-noteref"><sup>3</sup></a>.</p>
+<h2 id="going-further-than-necessary">Going further (than
+necessary?)</h2>
+<p>The previous solution has a drawback in that we need to overload the
+<code>eq</code> method to achieve both <code
+class="sourceCode kotlin">name eq <span class="st">&quot;test&quot;</span></code>
+and <code
+class="sourceCode kotlin"><span class="st">&quot;test&quot;</span> eq name</code>.
+Can we unify them into one mega-function? My idea here is to create a
+new “type class” <code
+class="sourceCode kotlin">ExpressableAs<span class="op">&lt;</span>T<span class="op">,</span> R<span class="op">&gt;</span></code>
+which denotes that we know how to express something of type T into a
+query of type R.</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> ExpressableAs<span class="op">&lt;</span><span class="dt">T</span>, <span class="dt">R</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">fun</span> <span class="fu">T</span><span class="op">.</span><span class="fu">toFilterPart</span><span class="op">():</span> <span class="dt">FilterPart</span><span class="op">&lt;</span><span class="dt">R</span><span class="op">&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The simple cases <code
+class="sourceCode kotlin">ExpressableAs<span class="op">&lt;</span><span class="kw">String</span><span class="op">,</span> <span class="kw">String</span><span class="op">&gt;</span></code>
+and <code
+class="sourceCode kotlin">ExpressableAs<span class="op">&lt;</span><span class="kw">Int</span><span class="op">,</span> <span class="kw">Int</span><span class="op">&gt;</span></code>
+can be derived from <code
+class="sourceCode kotlin">IntExpressable</code> and <code
+class="sourceCode kotlin">StringExpressable</code> respectively. The new
+case of <code
+class="sourceCode kotlin">ExpressableAs<span class="op">&lt;</span>Property<span class="op">&lt;</span>T<span class="op">&gt;,</span> T<span class="op">&gt;</span></code>
+is actually a special case of <code
+class="sourceCode kotlin">ExpressableAs<span class="op">&lt;</span>FilterPart<span class="op">&lt;</span>T<span class="op">&gt;,</span> T<span class="op">&gt;</span></code>.
+This is easily implemented by</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> <span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;</span> <span class="fu">filterPartExpressableAs</span><span class="op">():</span> <span class="dt">ExpressableAs</span><span class="op">&lt;</span><span class="dt">FilterPart</span><span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;</span>, <span class="dt">T</span><span class="op">&gt;</span> <span class="op">=</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">object</span> <span class="op">:</span> <span class="dt">ExpressableAs</span><span class="op">&lt;</span><span class="dt">FilterPart</span><span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;</span>, <span class="dt">T</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">override</span> <span class="kw">fun</span> <span class="fu">FilterPart</span><span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;.</span><span class="fu">toFilterPart</span><span class="op">():</span> <span class="dt">FilterPart</span><span class="op">&lt;</span><span class="dt">T</span><span class="op">&gt;</span> <span class="op">=</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>            <span class="kw">this</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div>
+<p>Armed with the new interface we define a single <code
+class="sourceCode kotlin">eq</code> function as follows (and also a new
+<code>and</code>, because why not)</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>context <span class="op">(</span>ExpressableAs<span class="op">&lt;</span>A<span class="op">,</span> T<span class="op">&gt;,</span> ExpressableAs<span class="op">&lt;</span>B<span class="op">,</span> T<span class="op">&gt;)</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">infix</span> <span class="kw">fun</span> <span class="op">&lt;</span><span class="dt">A</span>, <span class="dt">B</span>, <span class="dt">T</span><span class="op">&gt;</span> <span class="fu">A</span><span class="op">.</span><span class="fu">eq2</span><span class="op">(</span><span class="va">other</span> <span class="op">:</span> <span class="dt">B</span><span class="op">)</span> <span class="op">:</span> <span class="dt">Filter</span> <span class="op">=</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    BiOpFilter<span class="op">(</span><span class="kw">this</span><span class="op">.</span>toFilterPart<span class="op">(),</span> <span class="st">&quot;=&quot;</span><span class="op">,</span> other<span class="op">.</span>toFilterPart<span class="op">())</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>context <span class="op">(</span>ExpressableAs<span class="op">&lt;</span>A<span class="op">,</span> <span class="kw">Boolean</span><span class="op">&gt;,</span> ExpressableAs<span class="op">&lt;</span>B<span class="op">,</span> <span class="kw">Boolean</span><span class="op">&gt;)</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="kw">infix</span> <span class="kw">fun</span> <span class="op">&lt;</span><span class="dt">A</span>, <span class="dt">B</span><span class="op">&gt;</span> <span class="fu">A</span><span class="op">.</span><span class="fu">and</span><span class="op">(</span><span class="va">other</span><span class="op">:</span> <span class="dt">B</span><span class="op">):</span> <span class="dt">Filter</span> <span class="op">=</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    BiOpFilter<span class="op">(</span><span class="kw">this</span><span class="op">.</span>toFilterPart<span class="op">(),</span> <span class="st">&quot;and&quot;</span><span class="op">,</span> other<span class="op">.</span>toFilterPart<span class="op">())</span></span></code></pre></div>
+<p>Sadly, there is one snag: Even though we can create <code
+class="sourceCode kotlin">ExpressableAs<span class="op">&lt;</span>FilterPart<span class="op">&lt;</span>T<span class="op">&gt;,</span> T<span class="op">&gt;</span></code>
+for any type T, to actually use for a specific type we need to bring a
+specific instance into scope. The <code
+class="sourceCode kotlin">filter</code> function now looks like a mess<a
+href="#fn4" class="footnote-ref" id="fnref4"
+role="doc-noteref"><sup>4</sup></a>:</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> <span class="op">&lt;</span><span class="dt">E</span><span class="op">&gt;</span> <span class="fu">E</span><span class="op">.</span><span class="fu">filter2</span><span class="op">(</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="va">f</span> <span class="op">:</span> <span class="dt">context</span>(<span class="va">ExpressableAs</span>&lt;<span class="va">Int</span><span class="op">,</span> <span class="va">Int</span>&gt;<span class="op">,</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                <span class="va">ExpressableAs</span>&lt;<span class="va">FilterPart</span>&lt;<span class="va">Int</span>&gt;<span class="op">,</span> <span class="va">Int</span>&gt;<span class="op">,</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                <span class="va">ExpressableAs</span>&lt;<span class="va">String</span><span class="op">,</span> <span class="va">String</span>&gt;<span class="op">,</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>                <span class="va">ExpressableAs</span>&lt;<span class="va">FilterPart</span>&lt;<span class="va">String</span>&gt;<span class="op">,</span> <span class="va">String</span>&gt;<span class="op">,</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>                <span class="va">ExpressableAs</span>&lt;<span class="va">FilterPart</span>&lt;<span class="va">Boolean</span>&gt;<span class="op">,</span> <span class="va">Boolean</span>&gt;</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>        <span class="op">)</span> <span class="fu">E</span><span class="op">.()</span> -&gt; <span class="fu">Filter</span>)<span class="op">:</span> <span class="dt">Filter</span> <span class="op">=</span> TODO<span class="op">()</span></span></code></pre></div>
+<p>Maybe we should have stopped at the previous solution.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>We have seen how context receivers can help keep our DSL clean by
+plumbing through needed information. I’m looking forward to what other
+uses the community can up using this new Kotlin feature.</p>
+<p>If anyone comes up with a better solution please let me know. Maybe
+an alternative would be <a
+href="https://arrow-kt.io/docs/meta/proofs/">Arrow proofs</a>? If it
+gets picked back up again.</p>
+<section class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>And the types in the entities could
+contain such an unsupported type<a href="#fnref1" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>In an actual system it would also
+contain further metadata such as the table name<a href="#fnref2"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>If a client knows how to express some
+other types as well, it can easily add them to the context.<a
+href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p>Can you spot why we need
+<code>ExpressableAs&lt;FilterPart&lt;Boolean&gt;, Boolean&gt;</code>?<a
+href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+</body>
+</html>
