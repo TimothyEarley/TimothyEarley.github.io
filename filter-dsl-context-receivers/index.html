@@ -5,6 +5,7 @@
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Timothy Earley" />
+  <meta name="dcterms.date" content="2022-02-13" />
   <title>DSL with new context receivers</title>
   <style>
     html {
@@ -219,6 +220,17 @@
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <style>
+  p.author::after {
+      content: ",";
+  }
+  p.date, p.author {
+      margin: 0;
+      color: gray;
+      display: inline
+  }
+  h1.title {
+      margin-bottom: 0;
+  }
   pre.sourceCode {
       margin: 10px;
   }
@@ -231,6 +243,7 @@
 <header id="title-block-header">
 <h1 class="title">DSL with new context receivers</h1>
 <p class="author">Timothy Earley</p>
+<p class="date">2022-02-13</p>
 </header>
 <p><img src="images/title.jpg" style="width:100.0%" /></p>
 <h2 id="the-problem">The problem</h2>
@@ -413,8 +426,8 @@ class="sourceCode kotlin">eq</code> function as follows (and also a new
 <code>and</code>, because why not)</p>
 <div class="sourceCode" id="cb15"><pre
 class="sourceCode kotlin"><code class="sourceCode kotlin"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>context <span class="op">(</span>ExpressableAs<span class="op">&lt;</span>A<span class="op">,</span> T<span class="op">&gt;,</span> ExpressableAs<span class="op">&lt;</span>B<span class="op">,</span> T<span class="op">&gt;)</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">infix</span> <span class="kw">fun</span> <span class="op">&lt;</span><span class="dt">A</span>, <span class="dt">B</span>, <span class="dt">T</span><span class="op">&gt;</span> <span class="fu">A</span><span class="op">.</span><span class="fu">eq2</span><span class="op">(</span><span class="va">other</span> <span class="op">:</span> <span class="dt">B</span><span class="op">)</span> <span class="op">:</span> <span class="dt">Filter</span> <span class="op">=</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    BiOpFilter<span class="op">(</span><span class="kw">this</span><span class="op">.</span>toFilterPart<span class="op">(),</span> <span class="st">&quot;=&quot;</span><span class="op">,</span> other<span class="op">.</span>toFilterPart<span class="op">())</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">infix</span> <span class="kw">fun</span> <span class="op">&lt;</span><span class="dt">A</span>, <span class="dt">B</span>, <span class="dt">T</span><span class="op">&gt;</span> <span class="fu">A</span><span class="op">.</span><span class="fu">eq</span><span class="op">(</span><span class="va">other</span> <span class="op">:</span> <span class="dt">B</span><span class="op">)</span> <span class="op">:</span> <span class="dt">Filter</span> <span class="op">=</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    BiOpFilter<span class="op">(</span><span class="kw">this</span><span class="op">.</span>toFilterPart<span class="op">(),</span> <span class="st">&quot;eq&quot;</span><span class="op">,</span> other<span class="op">.</span>toFilterPart<span class="op">())</span></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>context <span class="op">(</span>ExpressableAs<span class="op">&lt;</span>A<span class="op">,</span> <span class="kw">Boolean</span><span class="op">&gt;,</span> ExpressableAs<span class="op">&lt;</span>B<span class="op">,</span> <span class="kw">Boolean</span><span class="op">&gt;)</span></span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="kw">infix</span> <span class="kw">fun</span> <span class="op">&lt;</span><span class="dt">A</span>, <span class="dt">B</span><span class="op">&gt;</span> <span class="fu">A</span><span class="op">.</span><span class="fu">and</span><span class="op">(</span><span class="va">other</span><span class="op">:</span> <span class="dt">B</span><span class="op">):</span> <span class="dt">Filter</span> <span class="op">=</span></span>
