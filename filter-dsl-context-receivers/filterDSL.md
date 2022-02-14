@@ -1,9 +1,21 @@
 ---
 title: DSL with new context receivers
 author: Timothy Earley
+date: 2022-02-13
 mainfont: Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif
 header-includes: |
   <style>
+  p.author::after {
+      content: ",";
+  }
+  p.date, p.author {
+      margin: 0;
+      color: gray;
+      display: inline
+  }
+  h1.title {
+      margin-bottom: 0;
+  }
   pre.sourceCode {
       margin: 10px;
   }
@@ -185,8 +197,8 @@ Armed with the new interface we define a single `eq`{.kotlin} function as follow
 
 ```kotlin
 context (ExpressableAs<A, T>, ExpressableAs<B, T>)
-infix fun <A, B, T> A.eq2(other : B) : Filter =
-    BiOpFilter(this.toFilterPart(), "=", other.toFilterPart())
+infix fun <A, B, T> A.eq(other : B) : Filter =
+    BiOpFilter(this.toFilterPart(), "eq", other.toFilterPart())
 
 context (ExpressableAs<A, Boolean>, ExpressableAs<B, Boolean>)
 infix fun <A, B> A.and(other: B): Filter =
